@@ -1,10 +1,11 @@
 import { differenceInHours, differenceInMinutes, subDays } from 'date-fns';
 import { CanvasItem } from './entity/CanvasItem';
 import { MoreThan } from 'typeorm';
-import { getCanvasRepo, JWT_SECRET, UserToken } from '.';
+import { getCanvasRepo, JWT_SECRET } from '.';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { jwtDecode } from 'jwt-decode';
+import { UserToken } from './routes/userRoutes';
 
 const HOURS_IN_DAY = 24;
 const MINS_IN_HOUR = 60

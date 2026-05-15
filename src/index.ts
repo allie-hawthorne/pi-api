@@ -4,56 +4,19 @@ dotenv.config();
 import 'reflect-metadata';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { DataSource } from "typeorm";
-import { User } from "./entity/User";
-import { CanvasItem } from "./entity/CanvasItem";
 import { createAuthRoutes } from './routes/authRoutes';
 import { createGifCanvasRoutes } from './routes/gifCanvasRoutes';
 import { createUserRoutes } from './routes/userRoutes';
+import { initialiseDb } from './dbConfig';
 
-export interface UserToken {
-    id: number
-    email: string
-    firstName: string
-}
-
-export const getUserRepo = () => AppDataSource.getRepository(User);
-export const getCanvasRepo = () => AppDataSource.getRepository(CanvasItem);
-
-export const AppDataSource = new DataSource({
-    type: "mysql",
-    host: process.env.DB_HOST || "localhost",
-    port: parseInt(process.env.DB_PORT || "3306"),
-    username: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD || "root",
-    database: process.env.DB_NAME || "test",
-    entities: [User, CanvasItem],
-    synchronize: process.env.NODE_ENV === 'development', // Synchronize only in development
-    // Turned off for now - log & sync makes reloading take so long
-    // logging: process.env.NODE_ENV === 'development', // Log only in development
-})
+export const { DbDataSource, JWT_SECRET, getCanvasRepo, getUserRepo } = initialiseDb();
 
 export const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(express.json());
-
 // TODO: This is not secure - change this!
 app.use(cors());
-
-export const JWT_SECRET = process.env.JWT_SECRET!;
-if (!JWT_SECRET) {
-    console.error("FATAL ERROR: JWT_SECRET is not defined in .env file");
-    process.exit(1);
-}
-
-AppDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
+app.use(express.json());
 
 app.get('/api/hello', (req: Request, res: Response) => {
     res.json({ message: 'Hello from the API!' });

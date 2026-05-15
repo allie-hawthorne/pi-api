@@ -1,6 +1,12 @@
 import { Request, Response } from 'express';
 import { app, getUserRepo } from "..";
 
+export interface UserToken {
+    id: number
+    email: string
+    firstName: string
+}
+
 export const createUserRoutes = () => {
   app.get("/api/users/:id", async function (req: Request, res: Response) {
     try {

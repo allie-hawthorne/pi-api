@@ -1,37 +1,32 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import { app, AppDataSource, getUserRepo, JWT_SECRET, UserToken } from "..";
+import { app, DbDataSource, getUserRepo, JWT_SECRET } from "..";
 import { User } from '../entity/User';
+import { UserToken } from './userRoutes';
 
 export const createAuthRoutes = () => {
-  // Register Endpoint
   app.post("/api/auth/register", async function (req: Request, res: Response) {
       const { firstName, lastName, email, password } = req.body;
 
-      // Basic validation
       if (!firstName || !lastName || !email || !password) {
           return res.status(400).json({ message: "All fields are required" });
       }
 
       try {
-          // Check if user already exists
           const existingUser = await getUserRepo().findOneBy({ email: email });
           if (existingUser) {
               return res.status(409).json({ message: "Email already exists" });
           }
 
-          // Create new user instance
           const user = new User();
           user.firstName = firstName;
           user.lastName = lastName;
           user.email = email;
-          user.password = password; // Password will be hashed by @BeforeInsert hook
+          user.password = password;
 
-          // Save the user (password gets hashed automatically)
           await getUserRepo().save(user);
 
-          // Don't send password back
           const { password: _, ...userWithoutPassword } = user;
           res.status(201).json({ message: "User created successfully", user: userWithoutPassword });
 
@@ -49,29 +44,26 @@ export const createAuthRoutes = () => {
           return res.status(400).json({ message: "Email and password are required" });
       }
 
-      const userRepository = AppDataSource.getRepository(User);
+      const userRepository = DbDataSource.getRepository(User);
 
       try {
-          // Find user by email, explicitly selecting the password
           const user = await userRepository.createQueryBuilder("user")
               .addSelect("user.password")
               .where("user.email = :email", { email })
               .getOne();
 
           if (!user) {
-              return res.status(401).json({ message: "Invalid credentials" }); // User not found
+              return res.status(401).json({ message: "Invalid credentials" });
           }
 
-          // Compare provided password with stored hash
           const isPasswordValid = await bcrypt.compare(password, user.password);
 
           if (!isPasswordValid) {
-              return res.status(401).json({ message: "Invalid credentials" }); // Incorrect password
+              return res.status(401).json({ message: "Invalid credentials" });
           }
 
-          // Generate JWT - Include firstName in the payload
           const tokenPayload: UserToken = { id: user.id, email: user.email, firstName: user.firstName };
-          const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
+          const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
           res.json({ message: "Login successful", token });
 
