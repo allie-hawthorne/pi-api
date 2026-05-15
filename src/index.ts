@@ -9,6 +9,7 @@ import { User } from "./entity/User";
 import { CanvasItem } from "./entity/CanvasItem";
 import { createAuthRoutes } from './routes/authRoutes';
 import { createGifCanvasRoutes } from './routes/gifCanvasRoutes';
+import { createUserRoutes } from './routes/userRoutes';
 
 export interface UserToken {
     id: number
@@ -58,22 +59,7 @@ app.get('/api/hello', (req: Request, res: Response) => {
     res.json({ message: 'Hello from the API!' });
 });
 
-// Endpoint to get user by ID
-app.get("/api/users/:id", async function (req: Request, res: Response) {
-    try {
-        const user = await getUserRepo().findOneBy({
-            id: parseInt(req.params.id)
-        })
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        res.json(user)
-    } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-})
-
+createUserRoutes();
 createAuthRoutes();
 createGifCanvasRoutes();
 
