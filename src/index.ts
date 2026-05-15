@@ -8,6 +8,7 @@ import { DataSource } from "typeorm";
 import { User } from "./entity/User";
 import { CanvasItem } from "./entity/CanvasItem";
 import { createAuthRoutes } from './routes/authRoutes';
+import { createGifCanvasRoutes } from './routes/gifCanvasRoutes';
 
 export interface UserToken {
     id: number
@@ -74,6 +75,7 @@ app.get("/api/users/:id", async function (req: Request, res: Response) {
 })
 
 createAuthRoutes();
+createGifCanvasRoutes();
 
 app.listen(port, () => {
     console.log(`API server listening at http://localhost:${port} in ${process.env.NODE_ENV || 'development'} mode`);
