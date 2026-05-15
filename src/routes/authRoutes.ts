@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { app, AppDataSource, getUserRepo, JWT_SECRET, UserToken } from "..";
 import { User } from '../entity/User';
 
-
 export const createAuthRoutes = () => {
   // Register Endpoint
   app.post("/api/auth/register", async function (req: Request, res: Response) {
