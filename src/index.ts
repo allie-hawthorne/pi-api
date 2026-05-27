@@ -43,7 +43,7 @@ Item: ${item}
 export const { DbDataSource, JWT_SECRET, getCanvasRepo, getUserRepo } = initialiseDb();
 
 export const app = express();
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 3001;
 
 // TODO: This is not secure - change this!
 app.use(cors());
