@@ -10,6 +10,7 @@ import { createUserRoutes } from './routes/userRoutes';
 import { initialiseDb } from './dbConfig';
 import { generateText, Output } from 'ai';
 import { google } from '@ai-sdk/google';
+import { rateLimit } from 'express-rate-limit';
 import z from 'zod';
 
 const constructDate = () => `${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}`;
@@ -48,6 +49,7 @@ const port = process.env.PORT || 3001;
 // TODO: This is not secure - change this!
 app.use(cors());
 app.use(express.json());
+app.use(rateLimit({limit: 10}));
 
 app.get('/api/recycle', async (req: Request, res: Response) => {
   const item = req.query.item as string;
