@@ -1,12 +1,11 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
 import { app, DbDataSource, getUserRepo, JWT_SECRET } from "..";
 import { User } from '../entity/User';
 import { UserToken } from './userRoutes';
 
 export const createAuthRoutes = () => {
-  app.post("/api/auth/register", async function (req: Request, res: Response) {
+  app.post("/api/auth/register", async function (req, res) {
       const { firstName, lastName, email, password } = req.body;
 
       if (!firstName || !lastName || !email || !password) {
@@ -37,7 +36,7 @@ export const createAuthRoutes = () => {
   });
 
   // Login Endpoint
-  app.post("/api/auth/login", async function (req: Request, res: Response) {
+  app.post("/api/auth/login", async function (req, res) {
       const { email, password } = req.body;
 
       if (!email || !password) {

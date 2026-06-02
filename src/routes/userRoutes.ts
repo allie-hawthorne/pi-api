@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { app, getUserRepo } from "..";
 
 export interface UserToken {
@@ -8,7 +7,7 @@ export interface UserToken {
 }
 
 export const createUserRoutes = () => {
-  app.get("/api/users/:id", async function (req: Request, res: Response) {
+  app.get("/api/users/:id", async function (req, res) {
     try {
         const user = await getUserRepo().findOneBy({
             id: parseInt(req.params.id)

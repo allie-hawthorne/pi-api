@@ -1,15 +1,14 @@
-import { Request, Response } from 'express';
 import { app, getCanvasRepo } from "..";
 import { getItemsInTheLastDay, getTimeToWait, getUserDataOrFail } from '../utils';
 import { featuredTenor, searchTenor } from '../tenor';
 
 export const createGifCanvasRoutes = () => {
-  app.get("/api/canvas", async function (req: Request, res: Response) {
+  app.get("/api/canvas", async function (req, res) {
     const items = await getCanvasRepo().find();
     res.status(200).json(items);
   });
 
-  app.post("/api/canvas", async function (req: Request, res: Response) {
+  app.post("/api/canvas", async function (req, res) {
     const data = getUserDataOrFail(req);
     if (!data) {
         console.log('ERROR:', req.query, req.headers.authorization)
@@ -37,7 +36,7 @@ export const createGifCanvasRoutes = () => {
     res.status(200).json(newItem);
   });
 
-  app.get('/api/gifs/search', async function (req: Request, res: Response) {
+  app.get('/api/gifs/search', async function (req, res) {
     const q = req.query.q?.toString();
 
     if (!q) throw new Error('No search query')
@@ -51,7 +50,7 @@ export const createGifCanvasRoutes = () => {
     return res.status(200).json(gifs)
   });
 
-  app.get('/api/gifs/featured', async function (req: Request, res: Response) {
+  app.get('/api/gifs/featured', async function (req, res) {
     const data = await featuredTenor();
 
     // TODO: Deal with any
