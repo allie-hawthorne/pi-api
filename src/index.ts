@@ -15,6 +15,7 @@ export const { DbDataSource, JWT_SECRET, getCanvasRepo, getUserRepo } = initiali
 
 export const app = express();
 const port = process.env.PORT || 3001;
+app.set('trust proxy', 1);
 
 // TODO: This is not secure - change this!
 app.use(cors());
