@@ -20,7 +20,7 @@ app.set('trust proxy', 1);
 // TODO: This is not secure - change this!
 app.use(cors());
 app.use(express.json());
-app.use(rateLimit({limit: 10}));
+app.use(rateLimit());
 
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the API!' });
