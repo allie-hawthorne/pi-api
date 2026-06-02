@@ -33,11 +33,15 @@ Item: ${item}
 
 export const createRecycleRoutes = () => {
   app.get('/api/recycle', async (req, res) => {
+    console.log('Client IP:', req.ip);
+
     const item = req.query.item as string;
     const postcode = req.query.postcode as string;
     const prompt = generateRecyclePrompt(postcode, item);
 
-    console.log({ query: req.query, prompt });
+    console.log();
+    console.log('Query:', req.query);
+    console.log();
 
     const { content: [content] } = await generateText({
       model: google('gemini-3.1-flash-lite'),
