@@ -33,8 +33,6 @@ Item: ${item}
 
 export const createRecycleRoutes = () => {
   app.get('/api/recycle', async (req, res) => {
-    console.log('Client IP:', req.ip);
-
     const item = req.query.item as string;
     const postcode = req.query.postcode as string;
     const prompt = generateRecyclePrompt(postcode, item);
