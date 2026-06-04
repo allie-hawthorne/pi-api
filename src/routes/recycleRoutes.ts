@@ -41,25 +41,30 @@ export const createRecycleRoutes = () => {
     console.log('Query:', req.query);
     console.log();
 
-    const { content: [content] } = await generateText({
-      model: google('gemini-3.1-flash-lite'),
-      output: Output.object({
-        schema: z.object({
-          recyclable: z.enum(['yes', 'no', 'more_info_needed']),
-          reason: z.string(),
-          tips: z.string().optional(),
-          url: z.string().optional()
-        })
-      }),
-      prompt
-    });
+    try {
+      const {content: [content]} = await generateText({
+        model: google('gemini-3.1-flash-lite'),
+        output: Output.object({
+          schema: z.object({
+            recyclable: z.enum(['yes', 'no', 'more_info_needed']),
+            reason: z.string(),
+            tips: z.string().optional(),
+            url: z.string().optional()
+          })
+        }),
+        prompt,
+        maxRetries: 1,
+      });
+      
+      const text = ('text') in content ? content.text : ''
+      const json = text ? JSON.parse(text) : {};
 
-    const text = ('text') in content ? content.text : ''
-    const json = text ? JSON.parse(text) : {};
-
-    console.log({ json });
-
-    // TODO: Consider using res.json()
-    res.send(json);
+      // TODO: Consider using res.json()
+      res.send(json);
+    } catch (error) {
+      console.error('Error generating response:', error instanceof Error ? error.message : error);
+      res.status(500).json({ message: 'An error occurred while generating the response from Gemini.', error });
+      return;
+    }
   });
 };
