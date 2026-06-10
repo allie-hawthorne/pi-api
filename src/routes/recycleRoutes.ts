@@ -2,8 +2,12 @@ import { app } from "..";
 import { generateText, Output } from 'ai';
 import { google } from '@ai-sdk/google';
 import z from 'zod';
+import { appendFileSync } from "fs";
 
 const constructDate = () => `${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}`;
+
+const LOG_OUTPUT_FILE = 'output.txt';
+const logToFile = (...data: unknown[]) => appendFileSync(LOG_OUTPUT_FILE, `${new Date()} ${data.map(d => JSON.stringify(d))}`)
 
 // TODO: Consider a framework like CO-STAR for better responses
 const generateRecyclePrompt = (postcode: string, item: string) => `
@@ -41,6 +45,8 @@ export const createRecycleRoutes = () => {
     console.log('Query:', req.query);
     console.log();
 
+    logToFile(req.query);
+
     try {
       const {content: [content]} = await generateText({
         model: google('gemini-3.1-flash-lite'),
@@ -58,11 +64,14 @@ export const createRecycleRoutes = () => {
       
       const text = ('text') in content ? content.text : ''
       const json = text ? JSON.parse(text) : {};
+      
+      logToFile(json);
 
       // TODO: Consider using res.json()
       res.send(json);
     } catch (error) {
       console.error('Error generating response:', error instanceof Error ? error.message : error);
+      logToFile("ERROR: ", error);
       res.status(500).json({ message: 'An error occurred while generating the response from Gemini.', error });
       return;
     }
