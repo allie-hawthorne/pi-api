@@ -7,7 +7,7 @@ import { appendFileSync } from "fs";
 const constructDate = () => `${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}`;
 
 const LOG_OUTPUT_FILE = 'output.txt';
-const logToFile = (...data: unknown[]) => appendFileSync(LOG_OUTPUT_FILE, `${new Date()} ${data.map(d => JSON.stringify(d))}`)
+const logToFile = (...data: unknown[]) => appendFileSync(LOG_OUTPUT_FILE, `${new Date()} ${data.map(d => JSON.stringify(d))}\n`)
 
 // TODO: Consider a framework like CO-STAR for better responses
 const generateRecyclePrompt = (postcode: string, item: string) => `
